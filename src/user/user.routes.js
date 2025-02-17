@@ -1,30 +1,36 @@
 import { Router } from 'express'
-import { registerUser, loginUser } from './user.controller.js'
+import { get, getAll, updateStatus } from './user.controller.js'
 import { isAdmin, validateJwt } from '../../middlewares/validate.jwt.js'
 
 const api = Router()
 
-// Rutas públicas (registro y login)
-api.post('/register', registerUser)
-api.post('/login', loginUser)
-
-// Rutas privadas (solo accesibles si el usuario está autenticado y tiene rol ADMIN)
+// Rutas privadas
 api.get(
-    '/:id',
+    '/', 
     [
-        validateJwt,
+        validateJwt, 
         isAdmin
-    ],
+    ], 
+    getAll
+)
+
+api.get(
+    '/:id', 
+    [
+        validateJwt, 
+        isAdmin
+    ], 
     get
 )
 
-api.get(
-    '/',
+// Activar/desactivar usuario
+api.put(
+    '/:id/status', 
     [
-        validateJwt,
+        validateJwt, 
         isAdmin
-    ],
-    getAll
-)
+    ], 
+    updateStatus
+) 
 
 export default api

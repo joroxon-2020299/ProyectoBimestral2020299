@@ -2,7 +2,7 @@
 'use strict'
 
 import jwt from 'jsonwebtoken'
-import { findUser } from '../helpers/db.validators.js'
+import { userExistsById } from '../helpers/db.validators.js'
 
 //Validar que venga un token válido y no haya expirado
 export const validateJwt = async(req, res, next)=>{
@@ -16,7 +16,7 @@ export const validateJwt = async(req, res, next)=>{
         //Desencriptar el token
         let user = jwt.verify(authorization, secretKey)
         //Verificar que aún exista el usuario en la BD
-        const validateUser = await findUser(user.uid)
+        const validateUser = await userExistsById(user.uid)
         if(!validateUser) return res.status(404).send(
             {
                 success: false,

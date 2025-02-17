@@ -1,20 +1,51 @@
 import { Router } from 'express'
-import { createCategory, getCategories } from './category.controller.js'
-import { validateJwt, isAdmin } from '../../middlewares/validate.jwt.js'
+import { getCategoryById, getAllCategories, createCategory, updateCategory, toggleCategoryStatus } from './category.controller.js'
+import { isAdmin, validateJwt } from '../../middlewares/validate.jwt.js'
 
 const api = Router()
 
-// Rutas públicas (obtener todas las categorías)
-api.get('/', getCategories)
+// Obtener todas las categorías
+api.get(
+    '/', 
+    validateJwt, 
+    getAllCategories
+)
 
-// Rutas privadas (solo accesibles si el usuario está autenticado y tiene rol ADMIN)
+// Obtener una categoría por su ID
+api.get(
+    '/:id', 
+    validateJwt, 
+    getCategoryById
+)
+
+// Crear una nueva categoría
 api.post(
-    '/',
+    '/', 
     [
-        validateJwt,
+        validateJwt, 
         isAdmin
-    ],
+    ], 
     createCategory
+)
+
+// Actualizar una categoría
+api.put(
+    '/:id', 
+    [
+        validateJwt, 
+        isAdmin
+    ], 
+    updateCategory
+)
+
+// Activar/desactivar categoría
+api.put(
+    '/:id/status', 
+    [
+        validateJwt, 
+        isAdmin
+    ], 
+    toggleCategoryStatus
 )
 
 export default api

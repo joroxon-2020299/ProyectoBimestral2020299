@@ -1,20 +1,56 @@
 import { Router } from 'express'
-import { createInvoice, getInvoicesByUser } from './invoice.controller.js'
-import { validateJwt } from '../../middlewares/validate.jwt.js'
+import { 
+    getInvoiceById, 
+    getAllInvoices, 
+    createInvoice, 
+    updateInvoice, 
+    updateInvoiceStatus } from './invoice.controller.js'
+import { isAdmin, validateJwt } from '../../middlewares/validate.jwt.js'
 
 const api = Router()
 
-// Rutas privadas (solo accesibles si el usuario está autenticado)
+// Crear una factura
 api.post(
-    '/',
-    [validateJwt],
+    '/', 
+    [
+        validateJwt, 
+        isAdmin
+    ], 
     createInvoice
 )
 
+// Obtener todas las facturas
 api.get(
-    '/:userId',
-    [validateJwt],
-    getInvoicesByUser
+    '/', 
+    validateJwt, 
+    getAllInvoices
+)
+
+// Obtener una factura por su ID
+api.get(
+    '/:id', 
+    validateJwt, 
+    getInvoiceById
+)
+
+// Actualizar una factura
+api.put(
+    '/:id', 
+    [
+        validateJwt, 
+        isAdmin
+    ], 
+    updateInvoice
+)
+
+// Actualizar estado de factura
+api.put(
+    '/:id/status', 
+    [
+        validateJwt, 
+        isAdmin
+    ], 
+    updateInvoiceStatus
 )
 
 export default api
